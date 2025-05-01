@@ -5,9 +5,9 @@ use windows::Win32::Security::SECURITY_ATTRIBUTES;
 use windows::Win32::System::Threading::PROCESS_INFORMATION;
 use windows::Win32::System::Threading::STARTUPINFOA;
 use windows::Win32::Foundation::*;
-pub type _SECURITY_ATTRIBUTES = SECURITY_ATTRIBUTES;
-pub type _PROCESS_INFORMATION = PROCESS_INFORMATION;
-pub type _STARTUPINFOA = STARTUPINFOA;
+pub type LPSECURITY_ATTRIBUTES = SECURITY_ATTRIBUTES;
+pub type LPPROCESS_INFORMATION = PROCESS_INFORMATION;
+pub type LPSTARTUPINFOA = STARTUPINFOA;
 
 pub type DWORD = ::std::os::raw::c_ulong;
 pub type BOOL = ::std::os::raw::c_int;
@@ -19,9 +19,43 @@ pub type CHAR = ::std::os::raw::c_char;
 pub type LPSTR = *mut CHAR;
 pub type LPCSTR = *const CHAR;
 pub type HANDLE = *mut ::std::os::raw::c_void;
-pub type LPSECURITY_ATTRIBUTES = *mut _SECURITY_ATTRIBUTES;
-pub type LPPROCESS_INFORMATION = *mut _PROCESS_INFORMATION;
-pub type LPSTARTUPINFOA = *mut _STARTUPINFOA;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _SECURITY_ATTRIBUTES {
+    pub nLength: DWORD,
+    pub lpSecurityDescriptor: LPVOID,
+    pub bInheritHandle: BOOL,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _PROCESS_INFORMATION {
+    pub hProcess: HANDLE,
+    pub hThread: HANDLE,
+    pub dwProcessId: DWORD,
+    pub dwThreadId: DWORD,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _STARTUPINFOA {
+    pub cb: DWORD,
+    pub lpReserved: LPSTR,
+    pub lpDesktop: LPSTR,
+    pub lpTitle: LPSTR,
+    pub dwX: DWORD,
+    pub dwY: DWORD,
+    pub dwXSize: DWORD,
+    pub dwYSize: DWORD,
+    pub dwXCountChars: DWORD,
+    pub dwYCountChars: DWORD,
+    pub dwFillAttribute: DWORD,
+    pub dwFlags: DWORD,
+    pub wShowWindow: WORD,
+    pub cbReserved2: WORD,
+    pub lpReserved2: LPBYTE,
+    pub hStdInput: HANDLE,
+    pub hStdOutput: HANDLE,
+    pub hStdError: HANDLE,
+}
 pub type PDETOUR_CREATE_PROCESS_ROUTINEA = ::std::option::Option<
     unsafe extern "C" fn(
         lpApplicationName: LPCSTR,
