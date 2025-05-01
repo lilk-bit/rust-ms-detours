@@ -72,7 +72,7 @@ fn main() {
     // Tell cargo to invalidate the built crate whenever the wrapper changes
     println!("cargo:rerun-if-changed=wrapper.h");
 
-    //generate_bindings(build);
+    generate_bindings(build);
 }
 
 fn generate_bindings(build: PathBuf) {
@@ -83,40 +83,34 @@ fn generate_bindings(build: PathBuf) {
     let bindings = bindgen::Builder::default()
         // The input header we would like to generate
         // bindings for.
+        //.rust_target("1.81.0".parse()?)
         .header(build.join("wrapper.h").to_str().unwrap())
-        .allowlist_function("Detour.*")
+        .allowlist_function("DetourCreateProcessWithDllA")
+        .allowlist_function("DetourCreateProcessWithDllExA")
+        .blocklist_type("_.*")
         .blocklist_type("LP.*")
-        .blocklist_type("_GUID")
-        .blocklist_type("GUID")
-        .blocklist_type("ULONG")
-        .blocklist_type("PVOID")
         .blocklist_type("DWORD")
-        .blocklist_type("wchar_t")
         .blocklist_type("BOOL")
         .blocklist_type("BYTE")
         .blocklist_type("WORD")
-        .blocklist_type("PBYTE")
-        .blocklist_type("PDWORD")
-        .blocklist_type("INT")
+        .blocklist_type("LPBYTE")
+        .blocklist_type("LPVOID")
         .blocklist_type("CHAR")
-        .blocklist_type("LONG")
-        .blocklist_type("WCHAR")
+        .blocklist_type("LPSTR")
+        .blocklist_type("LPCSTR")
         .blocklist_type("HANDLE")
-        .blocklist_type("HMODULE")
-        .blocklist_type("HINSTANCE.*")
-        .blocklist_type("HWND.*")
-        .blocklist_type("_SECURITY_ATTRIBUTES")
-        .blocklist_type("_PROCESS_INFORMATION")
-        .blocklist_type("_STARTUPINFOA")
-        .blocklist_type("_STARTUPINFOW")
-        .raw_line("use winapi::shared::minwindef::*;")
-        .raw_line("use winapi::um::winnt::*;")
-        .raw_line("use winapi::um::winnt::{INT};")
-        .raw_line("use winapi::um::minwinbase::*;")
-        .raw_line("use winapi::um::processthreadsapi::*;")
-        .raw_line("use winapi::shared::guiddef::*;")
-        .raw_line("use winapi::shared::windef::*;")
-        // Tell cargo to invalidate the built crate whenever any of the
+        .raw_line("use windows::core::*;")
+        .raw_line("use windows::Win32::Foundation::*;")
+        .raw_line("use windows::Win32::System::Threading::PROCESS_INFORMATION;")
+        .raw_line("use windows::Win32::System::Threading::STARTUPINFOA;")
+        .raw_line("pub type LPSECURITY_ATTRIBUTES = *mut windows::Win32::Security::SECURITY_ATTRIBUTES;")
+        .raw_line("pub type LPPROCESS_INFORMATION = *mut PROCESS_INFORMATION;")
+        .raw_line("pub type LPSTARTUPINFOA = *mut STARTUPINFOA;")
+        .raw_line("pub type DWORD = u32;")
+        .raw_line("pub type LPSTR = PSTR;")
+        .raw_line("pub type LPCSTR = PCSTR;")
+        .raw_line("pub type LPVOID = *mut core::ffi::c_void;")
+        // tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .layout_tests(false)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
