@@ -3,15 +3,20 @@
 use windows::core::*;
 use windows::Win32::Foundation::*;
 use windows::Win32::System::Threading::PROCESS_INFORMATION;
-use windows::Win32::System::Threading::STARTUPINFOA;
+use windows::Win32::System::Threading::{STARTUPINFOA, STARTUPINFOW};
 pub type LPSECURITY_ATTRIBUTES = *mut windows::Win32::Security::SECURITY_ATTRIBUTES;
 pub type LPPROCESS_INFORMATION = *mut PROCESS_INFORMATION;
 pub type LPSTARTUPINFOA = *mut STARTUPINFOA;
+pub type LPSTARTUPINFOW = *mut STARTUPINFOW;
 pub type DWORD = u32;
 pub type LPSTR = PSTR;
 pub type LPCSTR = PCSTR;
+pub type LPWSTR = PWSTR;
+pub type LPCWSTR = PCWSTR;
 pub type LPVOID = *mut core::ffi::c_void;
 
+pub type wchar_t = ::std::os::raw::c_ushort;
+pub type WCHAR = wchar_t;
 pub type PDETOUR_CREATE_PROCESS_ROUTINEA = ::std::option::Option<
     unsafe extern "C" fn(
         lpApplicationName: LPCSTR,
@@ -26,8 +31,22 @@ pub type PDETOUR_CREATE_PROCESS_ROUTINEA = ::std::option::Option<
         lpProcessInformation: LPPROCESS_INFORMATION,
     ) -> BOOL,
 >;
+pub type PDETOUR_CREATE_PROCESS_ROUTINEW = ::std::option::Option<
+    unsafe extern "C" fn(
+        lpApplicationName: LPCWSTR,
+        lpCommandLine: LPWSTR,
+        lpProcessAttributes: LPSECURITY_ATTRIBUTES,
+        lpThreadAttributes: LPSECURITY_ATTRIBUTES,
+        bInheritHandles: BOOL,
+        dwCreationFlags: DWORD,
+        lpEnvironment: LPVOID,
+        lpCurrentDirectory: LPCWSTR,
+        lpStartupInfo: LPSTARTUPINFOW,
+        lpProcessInformation: LPPROCESS_INFORMATION,
+    ) -> BOOL,
+>;
 unsafe extern "C" {
-    pub fn DetourCreateProcessWithDllA(
+    pub fn DetourCreateProcessWithDllExA(
         lpApplicationName: LPCSTR,
         lpCommandLine: LPSTR,
         lpProcessAttributes: LPSECURITY_ATTRIBUTES,
@@ -43,18 +62,18 @@ unsafe extern "C" {
     ) -> BOOL;
 }
 unsafe extern "C" {
-    pub fn DetourCreateProcessWithDllExA(
-        lpApplicationName: LPCSTR,
-        lpCommandLine: LPSTR,
+    pub fn DetourCreateProcessWithDllExW(
+        lpApplicationName: LPCWSTR,
+        lpCommandLine: LPWSTR,
         lpProcessAttributes: LPSECURITY_ATTRIBUTES,
         lpThreadAttributes: LPSECURITY_ATTRIBUTES,
         bInheritHandles: BOOL,
         dwCreationFlags: DWORD,
         lpEnvironment: LPVOID,
-        lpCurrentDirectory: LPCSTR,
-        lpStartupInfo: LPSTARTUPINFOA,
+        lpCurrentDirectory: LPCWSTR,
+        lpStartupInfo: LPSTARTUPINFOW,
         lpProcessInformation: LPPROCESS_INFORMATION,
         lpDllName: LPCSTR,
-        pfCreateProcessA: PDETOUR_CREATE_PROCESS_ROUTINEA,
+        pfCreateProcessW: PDETOUR_CREATE_PROCESS_ROUTINEW,
     ) -> BOOL;
 }
