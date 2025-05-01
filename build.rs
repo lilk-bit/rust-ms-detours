@@ -86,8 +86,15 @@ fn generate_bindings(build: PathBuf) {
         //.rust_target("1.81.0".parse()?)
         .header(build.join("wrapper.h").to_str().unwrap())
         .allowlist_function("DetourCreateProcessWithDllA")
+        .blocklist_type("_.*")
         .raw_line("use windows::core::*;")
+        .raw_line("use windows::Win32::Security::SECURITY_ATTRIBUTES;")
+        .raw_line("use windows::Win32::System::Threading::PROCESS_INFORMATION;")
+        .raw_line("use windows::Win32::System::Threading::STARTUPINFOA;")
         .raw_line("use windows::Win32::Foundation::*;")
+        .raw_line("pub type _SECURITY_ATTRIBUTES = SECURITY_ATTRIBUTES;")
+        .raw_line("pub type _PROCESS_INFORMATION = PROCESS_INFORMATION;")
+        .raw_line("pub type _STARTUPINFOA = STARTUPINFOA;")
         // tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .layout_tests(false)
