@@ -1,19 +1,20 @@
 extern crate bindgen;
 extern crate core;
 
+use cc::windows_registry::find_tool;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
-use cc::windows_registry::find_tool;
 
 // adopted and modified from https://github.com/compass-rs/sass-rs/blob/master/sass-sys/build.rs
 
-
 macro_rules! t {
-    ($e:expr) => (match $e {
-        Ok(n) => n,
-        Err(e) => panic!("\n{} failed with {}\n", stringify!($e), e),
-    })
+    ($e:expr) => {
+        match $e {
+            Ok(n) => n,
+            Err(e) => panic!("\n{} failed with {}\n", stringify!($e), e),
+        }
+    };
 }
 
 fn main() {
@@ -43,18 +44,20 @@ fn main() {
     t!(fs::create_dir_all(&build));
     cp_r(&src, &build);
 
+    fs::copy(
+        env::current_dir().unwrap().join("wrapper.h"),
+        build.join("wrapper.h"),
+    )
+    .unwrap();
 
-    fs::copy(&env::current_dir().unwrap().join("wrapper.h"), &build.join("wrapper.h")).unwrap();
-
-    let result = tool.to_command()
+    let result = tool
+        .to_command()
         .current_dir(&build)
-        .args(
-            [
-                "vc\\Detours.sln",
-                "/p:Configuration=ReleaseMD",
-                format!("/p:Platform={}", msvc_platform).as_str(),
-            ]
-        )
+        .args([
+            "vc\\Detours.sln",
+            "/p:Configuration=ReleaseMD",
+            format!("/p:Platform={}", msvc_platform).as_str(),
+        ])
         .output()
         .unwrap();
 
@@ -64,7 +67,10 @@ fn main() {
 
     // Tell cargo to look for shared libraries in the specified directory
     let target_folder = format!("lib.{}", msvc_platform);
-    println!("cargo:rustc-link-search={}", build.join(target_folder).display());
+    println!(
+        "cargo:rustc-link-search={}",
+        build.join(target_folder).display()
+    );
 
     println!("cargo:rustc-link-lib=detours");
     println!("cargo:rustc-link-lib=syelog");
@@ -76,7 +82,6 @@ fn main() {
 }
 
 fn generate_bindings(build: PathBuf) {
-
     // The bindgen::Builder is the main entry point
     // to bindgen, and lets you build up options for
     // the resulting bindings.
@@ -87,6 +92,7 @@ fn generate_bindings(build: PathBuf) {
         .header(build.join("wrapper.h").to_str().unwrap())
         .allowlist_function("DetourCreateProcessWithDllA")
         .allowlist_function("DetourCreateProcessWithDllsA")
+        .allowlist_function("DetourCreateProcessWithDllExW")
         .blocklist_type("_.*")
         .blocklist_type("LP.*")
         .blocklist_type("DWORD")
@@ -98,17 +104,24 @@ fn generate_bindings(build: PathBuf) {
         .blocklist_type("CHAR")
         .blocklist_type("LPSTR")
         .blocklist_type("LPCSTR")
+        .blocklist_type("LPWSTR")
+        .blocklist_type("LPCWSTR")
         .blocklist_type("HANDLE")
         .raw_line("use windows::core::*;")
         .raw_line("use windows::Win32::Foundation::*;")
         .raw_line("use windows::Win32::System::Threading::PROCESS_INFORMATION;")
-        .raw_line("use windows::Win32::System::Threading::STARTUPINFOA;")
-        .raw_line("pub type LPSECURITY_ATTRIBUTES = *mut windows::Win32::Security::SECURITY_ATTRIBUTES;")
+        .raw_line("use windows::Win32::System::Threading::{STARTUPINFOA, STARTUPINFOW};")
+        .raw_line(
+            "pub type LPSECURITY_ATTRIBUTES = *mut windows::Win32::Security::SECURITY_ATTRIBUTES;",
+        )
         .raw_line("pub type LPPROCESS_INFORMATION = *mut PROCESS_INFORMATION;")
         .raw_line("pub type LPSTARTUPINFOA = *mut STARTUPINFOA;")
+        .raw_line("pub type LPSTARTUPINFOW = *mut STARTUPINFOW;")
         .raw_line("pub type DWORD = u32;")
         .raw_line("pub type LPSTR = PSTR;")
         .raw_line("pub type LPCSTR = PCSTR;")
+        .raw_line("pub type LPWSTR = PWSTR;")
+        .raw_line("pub type LPCWSTR = PCWSTR;")
         .raw_line("pub type LPVOID = *mut core::ffi::c_void;")
         // tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
