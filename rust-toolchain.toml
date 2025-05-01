@@ -1,0 +1,2 @@
+[toolchain]
+channel = "nightly-2024-07-19" # points to 1.81.0 branched from master

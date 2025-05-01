@@ -10,8 +10,11 @@ documentation = "https://github.com/microsoft/Detours/wiki"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-winapi = { version = "0.3", features = ["minwindef", "libloaderapi", "processthreadsapi", "windef"] }
+[dependencies.windows]
+version = "=0.57.0"
+features = [
+    "Win32_Foundation",
+]
 
 [build-dependencies]
 bindgen = "0.71.1"

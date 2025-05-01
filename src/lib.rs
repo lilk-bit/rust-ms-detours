@@ -1,6 +1,7 @@
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![feature(unsafe_extern_blocks)]
 
 mod bindings;
 pub use bindings::*;
@@ -9,9 +10,9 @@ pub use bindings::*;
 mod tests {
     use std::ffi::{CStr, CString};
     use std::ptr;
-    use winapi::shared::minwindef::{BOOL, ULONG};
-    use winapi::um::libloaderapi::{GetModuleHandleA, GetProcAddress};
-    use winapi::um::winnt::{LPCSTR};
+    use windows::core::PCSTR;
+    use windows::Win32::Foundation::{BOOL, ULONG};
+    use windows::System::LibraryLoader::{GetModuleHandleA, GetProcAddress};
     use super::*;
 
     #[test]
@@ -52,7 +53,7 @@ mod tests {
         }
     }
 
-    unsafe extern "system" fn exports_cb(pContext: *mut winapi::ctypes::c_void, nOrdinal: ULONG, pszName: LPCSTR, pCode: *mut winapi::ctypes::c_void) -> BOOL
+    unsafe extern "system" fn exports_cb(pContext: *mut std::ffi::c_void, nOrdinal: ULONG, pszName: PCSTR, pCode: *mut std::ffi::c_void) -> BOOL
     {
         println!("pContext {:#?}", pContext);
         println!("nOrdinal {:#?}", nOrdinal);
