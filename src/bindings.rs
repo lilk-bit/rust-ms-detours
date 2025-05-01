@@ -2,7 +2,6 @@
 
 use windows::core::*;
 use windows::Win32::Foundation::*;
-use windows::Win32::Security::SECURITY_ATTRIBUTES;
 use windows::Win32::System::Threading::PROCESS_INFORMATION;
 use windows::Win32::System::Threading::STARTUPINFOA;
 pub type LPSECURITY_ATTRIBUTES = *mut windows::Win32::Security::SECURITY_ATTRIBUTES;
@@ -11,7 +10,7 @@ pub type LPSTARTUPINFOA = *mut STARTUPINFOA;
 pub type DWORD = u32;
 pub type LPSTR = PCSTR;
 pub type LPCSTR = PCSTR;
-pub type LPVOID = core::ffi::c_void;
+pub type LPVOID = *mut core::ffi::c_void;
 
 pub type PDETOUR_CREATE_PROCESS_ROUTINEA = ::std::option::Option<
     unsafe extern "C" fn(
