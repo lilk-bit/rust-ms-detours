@@ -8,7 +8,7 @@ pub type LPSECURITY_ATTRIBUTES = *mut windows::Win32::Security::SECURITY_ATTRIBU
 pub type LPPROCESS_INFORMATION = *mut PROCESS_INFORMATION;
 pub type LPSTARTUPINFOA = *mut STARTUPINFOA;
 pub type DWORD = u32;
-pub type LPSTR = PCSTR;
+pub type LPSTR = PSTR;
 pub type LPCSTR = PCSTR;
 pub type LPVOID = *mut core::ffi::c_void;
 

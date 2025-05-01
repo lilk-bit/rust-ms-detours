@@ -106,7 +106,7 @@ fn generate_bindings(build: PathBuf) {
         .raw_line("pub type LPPROCESS_INFORMATION = *mut PROCESS_INFORMATION;")
         .raw_line("pub type LPSTARTUPINFOA = *mut STARTUPINFOA;")
         .raw_line("pub type DWORD = u32;")
-        .raw_line("pub type LPSTR = PCSTR;")
+        .raw_line("pub type LPSTR = PSTR;")
         .raw_line("pub type LPCSTR = PCSTR;")
         .raw_line("pub type LPVOID = *mut core::ffi::c_void;")
         // tell cargo to invalidate the built crate whenever any of the
