@@ -19,43 +19,6 @@ pub type CHAR = ::std::os::raw::c_char;
 pub type LPSTR = *mut CHAR;
 pub type LPCSTR = *const CHAR;
 pub type HANDLE = *mut ::std::os::raw::c_void;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _SECURITY_ATTRIBUTES {
-    pub nLength: DWORD,
-    pub lpSecurityDescriptor: LPVOID,
-    pub bInheritHandle: BOOL,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _PROCESS_INFORMATION {
-    pub hProcess: HANDLE,
-    pub hThread: HANDLE,
-    pub dwProcessId: DWORD,
-    pub dwThreadId: DWORD,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct _STARTUPINFOA {
-    pub cb: DWORD,
-    pub lpReserved: LPSTR,
-    pub lpDesktop: LPSTR,
-    pub lpTitle: LPSTR,
-    pub dwX: DWORD,
-    pub dwY: DWORD,
-    pub dwXSize: DWORD,
-    pub dwYSize: DWORD,
-    pub dwXCountChars: DWORD,
-    pub dwYCountChars: DWORD,
-    pub dwFillAttribute: DWORD,
-    pub dwFlags: DWORD,
-    pub wShowWindow: WORD,
-    pub cbReserved2: WORD,
-    pub lpReserved2: LPBYTE,
-    pub hStdInput: HANDLE,
-    pub hStdOutput: HANDLE,
-    pub hStdError: HANDLE,
-}
 pub type PDETOUR_CREATE_PROCESS_ROUTINEA = ::std::option::Option<
     unsafe extern "C" fn(
         lpApplicationName: LPCSTR,
