@@ -42,3 +42,20 @@ unsafe extern "C" {
         pfCreateProcessA: PDETOUR_CREATE_PROCESS_ROUTINEA,
     ) -> BOOL;
 }
+unsafe extern "C" {
+    pub fn DetourCreateProcessWithDllsA(
+        lpApplicationName: LPCSTR,
+        lpCommandLine: LPSTR,
+        lpProcessAttributes: LPSECURITY_ATTRIBUTES,
+        lpThreadAttributes: LPSECURITY_ATTRIBUTES,
+        bInheritHandles: BOOL,
+        dwCreationFlags: DWORD,
+        lpEnvironment: LPVOID,
+        lpCurrentDirectory: LPCSTR,
+        lpStartupInfo: LPSTARTUPINFOA,
+        lpProcessInformation: LPPROCESS_INFORMATION,
+        nDlls: DWORD,
+        rlpDlls: *mut LPCSTR,
+        pfCreateProcessA: PDETOUR_CREATE_PROCESS_ROUTINEA,
+    ) -> BOOL;
+}

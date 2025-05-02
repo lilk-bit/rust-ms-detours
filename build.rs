@@ -86,6 +86,7 @@ fn generate_bindings(build: PathBuf) {
         //.rust_target("1.81.0".parse()?)
         .header(build.join("wrapper.h").to_str().unwrap())
         .allowlist_function("DetourCreateProcessWithDllA")
+        .allowlist_function("DetourCreateProcessWithDllsA")
         .blocklist_type("_.*")
         .blocklist_type("LP.*")
         .blocklist_type("DWORD")
